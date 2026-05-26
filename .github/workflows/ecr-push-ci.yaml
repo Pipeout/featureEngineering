@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  IMAGE_NAME: feature_engineering-pipeout
+  IMAGE_NAME: feature-engineering-pipeout
 
 jobs:
   build-and-push:
