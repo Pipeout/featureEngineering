@@ -1,4 +1,4 @@
-name: Build and Push to ECR
+name: Build and Register Feature Engineering Task
 
 on:
   push:
@@ -12,13 +12,11 @@ permissions:
 env:
   AWS_REGION: us-east-2
   IMAGE_NAME: feature-engineering-pipeout
-  ECS_CLUSTER: pipeout-cluster
-  ECS_SERVICE: feature_engineering
   TASK_DEFINITION_FAMILY: feature_engineering
   DOCKERFILE_PATH: infra/Dockerfile
 
 jobs:
-  deploy:
+  register-task:
     runs-on: ubuntu-latest
 
     steps:
@@ -60,18 +58,27 @@ jobs:
             --query taskDefinition \
             > task-definition.json
 
+      - name: Clean task definition
+        run: |
+          jq 'del(
+            .taskDefinitionArn,
+            .revision,
+            .status,
+            .requiresAttributes,
+            .compatibilities,
+            .registeredAt,
+            .registeredBy
+          )' task-definition.json > clean-task-definition.json
+
       - name: Render new task definition
         id: render-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: clean-task-definition.json
           container-name: feature_engineering
           image: ${{ env.IMAGE_URI }}
 
-      - name: Deploy ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Register new task definition revision
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file://${{ steps.render-task-definition.outputs.task-definition }}
