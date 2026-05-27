@@ -1,4 +1,3 @@
-import os
 import subprocess
 
 PATH_CLEANING = "scripts/cleaning.py"
