@@ -868,7 +868,6 @@ def cleaning_pipeline():
 
         df_merged = df_merged.drop_duplicates()
 
-
     except Exception as e:
         logging.exception(
             f"[ERROR]: There was an exception creating new columns in the dataset {e}"
@@ -895,4 +894,3 @@ if __name__ == "__main__":
     cleaning_pipeline()
     total_time = time.time() - start_time
     print(f"\ntotal time taken: {total_time:.2f}s\n")
-#
