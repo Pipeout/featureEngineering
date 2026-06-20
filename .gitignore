@@ -1,4 +1,8 @@
 .env
+env
+*ipynb 
+*.ipynb_checkpoints
+*.csv
 venv/
 .venv/
 .env/
