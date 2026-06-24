@@ -140,7 +140,7 @@ class BuildingFeatures:
     def calculate_permanence_period(self) -> None:
         df = self.df_history
         if "Período ingresso" in df.columns:
-            df["Período ingresso"] = df["Período ingresso"].astype(float) / 10
+            # df["Período ingresso"] = df["Período ingresso"].astype(float) / 10
 
             def cap_sem(x):
                 int_part = int(x)
@@ -591,6 +591,7 @@ class SelectingFeatures:
         ).drop_duplicates()
 
         df_clean_hist.to_csv(self.training_path, index=False)
+        # df_clean_hist.to_csv("feateng.csv", index=False)
         logging.info(f"[OK]: Final training dataset saved to {self.training_path}")
 
     def run(self) -> None:
